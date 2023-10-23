@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class FileReader {
+
     ArrayList<String> readFileContents(String fileName) {
         String path = "./resources/" + fileName;
         try {
@@ -14,4 +15,11 @@ public class FileReader {
         }
     }
 
+    // создать метод, который выводит в консоль содержание *.csv-файла
+    public void printFileData(String fileName) {
+        String path = "./resources/" + fileName;
+         System.out.println("В файле отчета " + fileName + " содержатся следующие данные:");
+         ArrayList<String> content = readFileContents(fileName);
+         System.out.println(content);
+    }
 }
