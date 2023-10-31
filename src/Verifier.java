@@ -2,10 +2,10 @@ import java.util.HashMap;
 
 // создать класс, который сверяет данные из месячных отчетов и годового отчета
 public class Verifier {
-    // задать поля классов, которые хранят данные из месячных и годового отчетов
+    MonthNumberToMonthName monthNumberToMonthName = new MonthNumberToMonthName();
+
     MonthlyReportManager monthlyReportManager;
     YearlyReportManager yearlyReportManager;
-    MonthNumberToMonthName monthNumberToMonthName = new MonthNumberToMonthName();
 
     // создать конструктор класса Verifier с параметрами
     public Verifier(MonthlyReportManager monthlyReportManager, YearlyReportManager yearlyReportManager) {
@@ -14,7 +14,7 @@ public class Verifier {
     }
 
     // выполнить сверку месячных и годового отчетов по тратам
-    public boolean verifyByExpenses() {
+    public void verifyByExpenses() {
         // задать переменную verify, которая вернет информацию об ошибке или успешном выполнении метода
         boolean verify = true;
 
@@ -34,8 +34,8 @@ public class Verifier {
             }
             // записать выбранные данные по тратам из месячного отчета в хэш-таблицу
             HashMap<Boolean, Integer> isExpenseToValue = monthlyExpenses.get(expense.monthNumber);
-            isExpenseToValue.put(expense.isExpense, isExpenseToValue.getOrDefault(expense.isExpense, 0) +
-                    expense.quantity * expense.unitPrise);
+            isExpenseToValue.put(expense.isExpense, isExpenseToValue.getOrDefault(expense.isExpense, 0)
+                    + expense.quantity * expense.unitPrise);
         }
 
         // создать хэш-таблицу, которая по ключу "monthNumber" хранит хэш-таблицу <isExpense, amount>
@@ -53,8 +53,8 @@ public class Verifier {
             }
             // записать выбранные данные по тратам из годового отчета в хэш-таблицу
             HashMap<Boolean, Integer> isExpenseToValue = yearlyExpenses.get(expense.monthNumber);
-            isExpenseToValue.put(expense.isExpense, isExpenseToValue.getOrDefault(expense.isExpense, 0) +
-                    expense.amount);
+            isExpenseToValue.put(expense.isExpense, isExpenseToValue.getOrDefault(expense.isExpense, 0)
+                    + expense.amount);
         }
 
         // задать цикл по переборке данных по ключу "monthNumber" в отчете по тратам по версии месячного отчета
@@ -66,9 +66,8 @@ public class Verifier {
 
             // проверить, что данные о запрашиваемом месяце есть в годовом отчете
             if (isExpenseToToValueByYear == null) {
-                System.out.println("Данные по тратам есть в отчете за месяц " +
-                        monthNumberToMonthName.printMonthName(monthNumber) +
-                        ", но отсутствуют в годовом отчете.");
+                System.out.println("Данные по тратам есть в отчете за "
+                        + monthNumberToMonthName.printMonthName(monthNumber) + ", но отсутствуют в годовом отчете.");
                 verify = false;
                 continue;
             }
@@ -82,22 +81,22 @@ public class Verifier {
                 int valueByYear = isExpenseToToValueByYear.getOrDefault(isExpense, 0);
                 // сравнить значения переменных
                 if (valueByMonth != valueByYear) {
-                    System.out.println("В месячном отчете сумма трат за месяц " +
-                            monthNumberToMonthName.printMonthName(monthNumber) +
-                            " составила " + valueByMonth + " руб., в годовом отчете сумма трат за месяц " +
-                            monthNumberToMonthName.printMonthName(monthNumber) +
-                            " составила " + valueByYear + " руб.");
+                    System.out.println("В месячном отчете сумма трат за "
+                            + monthNumberToMonthName.printMonthName(monthNumber) + " составила " + valueByMonth
+                            + " руб., в годовом отчете сумма трат за "
+                            + monthNumberToMonthName.printMonthName(monthNumber) + " составила " + valueByYear
+                            + " руб.");
                     // вернуть ошибку
                     verify = false;
                 }
             }
         }
         // вернуть результат сверки
-        return verify;
+        System.out.println("Результат сверки файлов годового и месячного отчетов по тратам: " + verify);
     }
 
     // выполнить сверку месячных и годового отчетов по доходам
-    public boolean verifyByIncomes() {
+    public void verifyByIncomes() {
         // задать переменную verify, которая вернет информацию об ошибке или успешном выполнении метода
         boolean verify = true;
 
@@ -117,8 +116,8 @@ public class Verifier {
             }
             // записать выбранные данные по тратам из месячного отчета в хэш-таблицу
             HashMap<Boolean, Integer> isIncomeToValue = monthlyIncomes.get(income.monthNumber);
-            isIncomeToValue.put(!income.isExpense, isIncomeToValue.getOrDefault(!income.isExpense, 0) +
-                    income.quantity * income.unitPrise);
+            isIncomeToValue.put(!income.isExpense, isIncomeToValue.getOrDefault(!income.isExpense, 0)
+                    + income.quantity * income.unitPrise);
         }
         // создать хэш-таблицу, которая по ключу "monthNumber" хранит хэш-таблицу <!isExpense, amount>
         // по версии годового отчета
@@ -148,8 +147,8 @@ public class Verifier {
 
             // проверить, что данные о запрашиваемом месяце есть в годовом отчете
             if (isIncomeToValueByYear == null) {
-                System.out.println("Данные по тратам есть в отчете за месяц  " +
-                        monthNumberToMonthName.printMonthName(monthNumber) + ", но отсутствуют в годовом отчете.");
+                System.out.println("Данные по тратам есть в отчете за  "
+                        + monthNumberToMonthName.printMonthName(monthNumber) + ", но отсутствуют в годовом отчете.");
                 verify = false;
                 continue;
             }
@@ -162,17 +161,17 @@ public class Verifier {
                 int valueByYear = isIncomeToValueByYear.getOrDefault(isIncome, 0);
                 // сравнить значения переменных
                 if (valueByMonth != valueByYear) {
-                    System.out.println("В месячном отчете сумма доходов за месяц " +
-                            monthNumberToMonthName.printMonthName(monthNumber) +
-                            " составила " + valueByMonth + " руб., в годовом отчете сумма доходов за месяц " +
-                            monthNumberToMonthName.printMonthName(monthNumber) +
-                            " составила " + valueByYear + " руб.");
+                    System.out.println("В месячном отчете сумма доходов за "
+                            + monthNumberToMonthName.printMonthName(monthNumber) + " составила " + valueByMonth
+                            + " руб., в годовом отчете сумма доходов за "
+                            + monthNumberToMonthName.printMonthName(monthNumber) + " составила " + valueByYear
+                            + " руб.");
                     // вернуть ошибку
                     verify = false;
                 }
             }
         }
         // вернуть результат сверки
-        return verify;
+        System.out.println("Результат сверки файлов годового и месячного отчетов по доходам: " + verify);
     }
 }

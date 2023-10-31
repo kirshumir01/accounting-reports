@@ -1,4 +1,3 @@
-import javax.swing.*;
 import java.util.Scanner;
 
 public class Main {
@@ -6,13 +5,11 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         FileReader fileReader = new FileReader();
         MonthlyReportManager monthlyReportManager = new MonthlyReportManager();
-        YearlyReportManager yearlyReportManager = new YearlyReportManager();
-        MonthNumberToMonthName monthNumberToMonthName = new MonthNumberToMonthName();
+        YearlyReportManager yearlyReportManager = new YearlyReportManager(monthlyReportManager);
         Verifier verifier = new Verifier(monthlyReportManager, yearlyReportManager);
 
 
         while (true) {
-
             System.out.println("Что вы хотите сделать?");
             System.out.println("1 - Считать все месячные отчеты");
             System.out.println("2 - Считать годовой отчет");
@@ -21,91 +18,50 @@ public class Main {
             System.out.println("5 - Вывести информацию о годовом отчете");
             System.out.println("0 - Выход");
 
+            int inputMenuItem = scanner.nextInt();
+
             int year = 2021;
-            String yearlyReportFileName = "y." + year + ".csv";
+            int firstMonthNumber = 1;
+            int lastMonthNumber = 3;
 
-            int userInput = scanner.nextInt();
-
-            switch (userInput) {
+            switch (inputMenuItem) {
                 case (1):
                     // проверить, что отчеты считаны, иначе - считать из файла
-                    monthlyReportManager.loadMonthlyReportFileChecker();
-                    System.out.println(" ");
+                    monthlyReportManager.loadMonthlyReportFileChecker(firstMonthNumber, lastMonthNumber);
 
                     // вывести содержание отчета в консоль
-                    for (int monthNumber = 1; monthNumber < 4; monthNumber++) {
-                        String monthlyReportFileName = "m.20210" + monthNumber + ".csv";
-                        fileReader.printFileData(monthlyReportFileName);
-                    }
-
+                    fileReader.printFileData(inputMenuItem, firstMonthNumber, lastMonthNumber, year);
                     break;
                 case (2):
                     // проверить, что отчет считан, иначе - считать из файла
-                    yearlyReportManager.loadYearlyReportFileChecker(yearlyReportFileName);
-                    System.out.println(" ");
+                    yearlyReportManager.loadYearlyReportFileChecker(year);
 
                     // вывести содержание отчета в консоль
-                    fileReader.printFileData(yearlyReportFileName);
+                    fileReader.printFileData(inputMenuItem, firstMonthNumber, lastMonthNumber, year);
                     break;
                 case (3):
-                    System.out.println("Проверка считывания информации из отчетов.");
                     // проверить, что отчеты считаны, иначе - считать из файла
-                    monthlyReportManager.loadMonthlyReportFileChecker();
-
-                    // проверить, что отчет считан, иначе - считать из файла
-                    yearlyReportManager.loadYearlyReportFileChecker(yearlyReportFileName);
-                    System.out.println(" ");
+                    monthlyReportManager.loadMonthlyReportFileChecker(firstMonthNumber, lastMonthNumber);
+                    yearlyReportManager.loadYearlyReportFileChecker(year);
 
                     // вывести результат в консоль
-                    System.out.println("Результат сверки файлов годового и месячного отчетов" +
-                            "по тратам: " + verifier.verifyByExpenses());
-                    System.out.println("Результат сверки файлов годового и месячного отчетов " +
-                            " по доходам: " + verifier.verifyByIncomes());
-                    System.out.println(" ");
+                    verifier.verifyByExpenses();
+                    verifier.verifyByIncomes();
                     break;
                 case (4):
-                    System.out.println("Проверка считывания информации из отчетов.");
                     // проверить, что отчеты считаны, иначе - считать из файла
-                    monthlyReportManager.loadMonthlyReportFileChecker();
-                    System.out.println(" ");
+                    monthlyReportManager.loadMonthlyReportFileChecker(firstMonthNumber, lastMonthNumber);
 
                     // вывести информацию обо всех месячных отчетах:
-                    for (int monthNumber = 1; monthNumber < 4; monthNumber++) {
-                        System.out.println("Информация по отчету за " +
-                                monthNumberToMonthName.printMonthName(monthNumber) + ":");
-                        monthlyReportManager.getMaxExpensiveItemByMonth(monthNumber);
-                        monthlyReportManager.getMaxProfitItemByMonth(monthNumber);
-                        System.out.println(" ");
-                    }
+                    monthlyReportManager.printMonthlyReportInformation(firstMonthNumber, lastMonthNumber);
                     break;
                 case (5):
-                    System.out.println("Проверка считывания информации из отчетов.");
                     // проверить, что отчеты считаны, иначе - считать из файла
-                    monthlyReportManager.loadMonthlyReportFileChecker();
-                    System.out.println(" ");
-
-                    yearlyReportManager.loadYearlyReportFileChecker(yearlyReportFileName);
-                    System.out.println(" ");
+                    monthlyReportManager.loadMonthlyReportFileChecker(firstMonthNumber, lastMonthNumber);
+                    yearlyReportManager.loadYearlyReportFileChecker(year);
 
                     // вывести номер года, прибыль по каждому месяцу, средние расход и доход за все операции
-                    System.out.println("Информация по отчету за " + year + " год:");
-
-                    for (int monthNumber = 1; monthNumber < 4; monthNumber++) {
-                        System.out.println("Прибыль за " + monthNumberToMonthName.printMonthName(monthNumber) +
-                                " (разница между доходами и расходами) по версии годового отчета составила " +
-                                yearlyReportManager.getEarningsByMonth(monthNumber) + " руб.");
-                    }
-                    System.out.println(" ");
-
-                    System.out.println("Средний расход за год по " + monthlyReportManager.getExpensesOperationsQuantity() +
-                            " операциям составил: " + yearlyReportManager.getExpensesSumByYear() /
-                            monthlyReportManager.getExpensesOperationsQuantity() + " руб. за одну операцию.");
-
-                    System.out.println("Средний доход за год по " + monthlyReportManager.getIncomesOperationsQuantity() +
-                            " операциям составил: " + yearlyReportManager.getIncomesSumByYear() /
-                            monthlyReportManager.getIncomesOperationsQuantity() + " руб. за одну операцию.");
-                    System.out.println(" ");
-
+                    yearlyReportManager.printYearlyReportInformation(year, firstMonthNumber, lastMonthNumber);
                     break;
                 case (0):
                     // выход из программы

@@ -1,3 +1,4 @@
+// создать класс, который конвертирует номер месяца в название
 public class MonthNumberToMonthName {
     int monthNumber;
 
@@ -18,7 +19,7 @@ public class MonthNumberToMonthName {
                 monthName = "март";
                 break;
             default:
-                System.out.println("Отчет по введенному месяцу отсутствует");
+                System.out.println("Номер месяца введен некорректно или находится вне заданного диапазона");
                 break;
         }
         return monthName;

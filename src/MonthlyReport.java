@@ -1,5 +1,4 @@
 // создать класс, который хранит данные из месячных отчетов
-
 public class MonthlyReport {
     //item_name,is_expense,quantity,sum_of_one
     public String itemName;
