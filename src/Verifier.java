@@ -1,19 +1,16 @@
 import java.util.HashMap;
 
-// создать класс, который сверяет данные из месячных отчетов и годового отчета
 public class Verifier {
     MonthNumberToMonthName monthNumberToMonthName = new MonthNumberToMonthName();
 
     MonthlyReportManager monthlyReportManager;
     YearlyReportManager yearlyReportManager;
 
-    // создать конструктор класса Verifier с параметрами
     public Verifier(MonthlyReportManager monthlyReportManager, YearlyReportManager yearlyReportManager) {
         this.monthlyReportManager = monthlyReportManager;
         this.yearlyReportManager = yearlyReportManager;
     }
 
-    // выполнить сверку месячных и годового отчетов по тратам
     public void verifyByExpenses() {
         // задать переменную verify, которая вернет информацию об ошибке или успешном выполнении метода
         boolean verify = true;
@@ -35,7 +32,7 @@ public class Verifier {
             // записать выбранные данные по тратам из месячного отчета в хэш-таблицу
             HashMap<Boolean, Integer> isExpenseToValue = monthlyExpenses.get(expense.monthNumber);
             isExpenseToValue.put(expense.isExpense, isExpenseToValue.getOrDefault(expense.isExpense, 0)
-                    + expense.quantity * expense.unitPrise);
+                    + expense.quantity * expense.unitPrice);
         }
 
         // создать хэш-таблицу, которая по ключу "monthNumber" хранит хэш-таблицу <isExpense, amount>
@@ -62,10 +59,10 @@ public class Verifier {
             // создать идентичные по структуре хэш-таблицы,
             // которые по ключу "isExpense" вынимают значения трат из месячного и годового отчетов
             HashMap<Boolean, Integer> isExpenseToValueByMonth = monthlyExpenses.get(monthNumber);
-            HashMap<Boolean, Integer> isExpenseToToValueByYear = yearlyExpenses.get(monthNumber);
+            HashMap<Boolean, Integer> isExpenseToValueByYear = yearlyExpenses.get(monthNumber);
 
             // проверить, что данные о запрашиваемом месяце есть в годовом отчете
-            if (isExpenseToToValueByYear == null) {
+            if (isExpenseToValueByYear == null) {
                 System.out.println("Данные по тратам есть в отчете за "
                         + monthNumberToMonthName.printMonthName(monthNumber) + ", но отсутствуют в годовом отчете.");
                 verify = false;
@@ -78,7 +75,7 @@ public class Verifier {
                 int valueByMonth = isExpenseToValueByMonth.get(isExpense);
                 // задать переменную valueByYear, которая хранит сумму трат в заданном месяце по версии годового отчета
                 // с проверкой данных - "если в годовом отчете нет информации о запрашиваемом месяце, вернуть 0"
-                int valueByYear = isExpenseToToValueByYear.getOrDefault(isExpense, 0);
+                int valueByYear = isExpenseToValueByYear.getOrDefault(isExpense, 0);
                 // сравнить значения переменных
                 if (valueByMonth != valueByYear) {
                     System.out.println("В месячном отчете сумма трат за "
@@ -91,7 +88,6 @@ public class Verifier {
                 }
             }
         }
-        // вернуть результат сверки
         System.out.println("Результат сверки файлов годового и месячного отчетов по тратам: " + verify);
     }
 
@@ -117,7 +113,7 @@ public class Verifier {
             // записать выбранные данные по тратам из месячного отчета в хэш-таблицу
             HashMap<Boolean, Integer> isIncomeToValue = monthlyIncomes.get(income.monthNumber);
             isIncomeToValue.put(!income.isExpense, isIncomeToValue.getOrDefault(!income.isExpense, 0)
-                    + income.quantity * income.unitPrise);
+                    + income.quantity * income.unitPrice);
         }
         // создать хэш-таблицу, которая по ключу "monthNumber" хранит хэш-таблицу <!isExpense, amount>
         // по версии годового отчета
@@ -171,7 +167,6 @@ public class Verifier {
                 }
             }
         }
-        // вернуть результат сверки
         System.out.println("Результат сверки файлов годового и месячного отчетов по доходам: " + verify);
     }
 }

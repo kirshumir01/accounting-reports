@@ -14,7 +14,6 @@ public class YearlyReportManager {
         this.monthlyReportManager = monthlyReportManager;
     }
 
-    // создать метод, который считывает данные из *.csv-файла
     public void loadYearlyReportFile(String fileName) {
         String content = fileReader.readFileContentsOrNull(fileName);
         String[] lines = content.split("\r?\n");
@@ -26,15 +25,14 @@ public class YearlyReportManager {
             int amount = Integer.parseInt(parts[1]);
             boolean isExpense = Boolean.parseBoolean(parts[2]);
 
-            // создать объект, который хранит считанную строку из годового отчета
             YearlyReport yearlyReportString = new YearlyReport(monthNumber, amount, isExpense);
-            // записать строки из годового отчета в список
             yearlyData.add(yearlyReportString);
         }
     }
 
-    // задать метод, который считает годовой отчет и, если файл отсутствует, сообщит об ошибке
     public void readYearlyReport(int year) {
+        yearNumberValidation(year);
+
         checkLoadYearlyReportFile = true;
         String yearlyReportFileName = "y." + year + ".csv";
         if (fileReader.readFileContentsOrNull(yearlyReportFileName) != null) {
@@ -52,10 +50,10 @@ public class YearlyReportManager {
         System.out.println(" ");
     }
 
-    // проверить считывание файла отчета
     public void loadYearlyReportFileChecker(int year) {
+        yearNumberValidation(year);
+
         if (!checkLoadYearlyReportFile) {
-            // заполнить список yearlyData данными из отчетов
             readYearlyReport(year);
         } else {
             System.out.println("Файл годового отчета считан ранее. Считанные данные сохранены в память программы.");
@@ -63,19 +61,15 @@ public class YearlyReportManager {
         }
     }
 
-    // создать метод, который посчитает сумму расходов за год
     public Integer getExpensesSumByYear() {
         HashMap<Integer, Integer> expensesByMonthNumber = new HashMap<>();
-        // записать в список значения трат
         for (YearlyReport data : yearlyData) {
             if (data.isExpense) {
-                // записать значения расходов
                 expensesByMonthNumber.put(data.monthNumber, expensesByMonthNumber.getOrDefault(data.monthNumber, 0) +
                         data.amount);
             }
         }
 
-        // посчитать сумму трат
         int expensesSum = 0;
         for (int expense : expensesByMonthNumber.values()) {
             expensesSum += expense;
@@ -83,19 +77,16 @@ public class YearlyReportManager {
         return expensesSum;
     }
 
-    // создать метод, который посчитает сумму доходов за год
     public Integer getIncomesSumByYear() {
         HashMap<Integer, Integer> incomesByMonthNumber = new HashMap<>();
 
         for (YearlyReport data : yearlyData) {
-            // записать значения доходов
             if (!data.isExpense) {
                 incomesByMonthNumber.put(data.monthNumber, incomesByMonthNumber.getOrDefault(data.monthNumber, 0) +
                         data.amount);
             }
         }
 
-        // посчитать сумму доходов
         int incomesSum = 0;
         for (int income : incomesByMonthNumber.values()) {
             incomesSum += income;
@@ -103,29 +94,30 @@ public class YearlyReportManager {
         return incomesSum;
     }
 
-    // создать метод, который посчитает прибыль по каждому месяцу
+    // метод, который посчитает прибыль по каждому месяцу
     // "прибыль" = "доходы" - "расходы"
     public Integer getEarningsByMonth(int monthNumber) {
+        monthNumberValidation(monthNumber);
+
         HashMap<Integer, Integer> expensesByMonthNumber = new HashMap<>();
         HashMap<Integer, Integer> incomesByMonthNumber = new HashMap<>();
 
-        // записать в список значения трат
         for (YearlyReport data : yearlyData) {
-            // записать значения доходов
             if (!data.isExpense) {
                 incomesByMonthNumber.put(data.monthNumber, incomesByMonthNumber.getOrDefault(data.monthNumber, 0)
                         + data.amount);
             } else {
-                // записать значения расходов
                 expensesByMonthNumber.put(data.monthNumber, expensesByMonthNumber.getOrDefault(data.monthNumber, 0)
                         + data.amount);
             }
         }
-        // прибыль за месяц
         return incomesByMonthNumber.get(monthNumber) - expensesByMonthNumber.get(monthNumber);
     }
 
     public void printYearlyReportInformation(int year, int firstMonthNumber, int lastMonthNumber) {
+        monthNumberValidation(firstMonthNumber);
+        monthNumberValidation(lastMonthNumber);
+
         System.out.println("Информация по отчету за " + year + " год:");
 
         for (int i = firstMonthNumber; i <= lastMonthNumber; i++) {
@@ -145,5 +137,17 @@ public class YearlyReportManager {
                 + " операциям составил: "
                 + getIncomesSumByYear() / monthlyReportManager.getIncomesOperationsQuantity()
                 + " руб. за одну операцию.");
+    }
+
+    private void yearNumberValidation(int year) {
+        if ((year < 1990) || (year > 2025)) {
+            System.out.println("Номер года должен быть от 1990 до 2025! Введено значение: " + year);
+        }
+    }
+
+    private void monthNumberValidation(int monthNumber) {
+        if ((monthNumber < 1) || (monthNumber > 12)) {
+            System.out.println("Номер месяца должен быть от 1 до 12! Введено значение: " + monthNumber);
+        }
     }
 }

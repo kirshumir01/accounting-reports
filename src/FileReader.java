@@ -13,26 +13,22 @@ public class FileReader {
         }
     }
 
-    // создать метод, который выводит в консоль содержание *.csv-файла
     public void printFileData(int inputMenuItem, int firstMonthNumber, int lastMonthNumber, int year) {
-        // вывести содержание файлов месячных отчетов
         if (inputMenuItem == 1) {
             for (int i = firstMonthNumber; i <= lastMonthNumber; i++) {
-                int monthNumber = i;
-                String monthlyReportFileName = "m.20210" + monthNumber + ".csv";
+                String monthlyReportFileName = "m.20210" + i + ".csv";
                 if (readFileContentsOrNull(monthlyReportFileName) != null) {
-                    System.out.println("В файле отчета " + monthlyReportFileName + " содержатся следующие данные:");
+                    System.out.println("В файле месячного отчета " + monthlyReportFileName + " содержатся следующие данные:");
                     String content = readFileContentsOrNull(monthlyReportFileName);
                     System.out.println(content);
                 } else {
                     break;
                 }
             }
-        // вывести содержание файла годового отчета
         } else if (inputMenuItem == 2) {
             String yearlyReportFileName = "y." + year + ".csv";
             if (readFileContentsOrNull(yearlyReportFileName) != null) {
-                System.out.println("В файле отчета " + yearlyReportFileName + " содержатся следующие данные:");
+                System.out.println("В файле годового отчета " + yearlyReportFileName + " содержатся следующие данные:");
                 String content = readFileContentsOrNull(yearlyReportFileName);
                 System.out.println(content);
             }
